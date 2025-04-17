@@ -1,0 +1,192 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>hi strangers</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #000;
+      color: #fff;
+      font-family: sans-serif;
+      text-align: center;
+      padding-top: 100px;
+      position: relative;
+      overflow: hidden;
+      height: 100vh;
+    }#lirik {
+  font-size: 24px;
+  opacity: 0;
+  transition: opacity 0.5s;
+  position: relative;
+  z-index: 10;
+}
+
+#credits {
+  font-size: 16px;
+  color: #ccc;
+  margin-top: 20px;
+  opacity: 1;
+  position: relative;
+  z-index: 10;
+}
+
+#watermark {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 30px;
+  color: rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+  opacity: 0.5;
+  font-family: sans-serif;
+  z-index: 10;
+}
+
+.rain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.drop {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.3);
+  width: 2px;
+  height: 20px;
+  animation: rain-drop 1s linear infinite;
+}
+
+@keyframes rain-drop {
+  0% { top: -20px; }
+  100% { top: 100vh; }
+}
+
+.flash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: white;
+  opacity: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+@keyframes flash {
+  0%, 100% { opacity: 0; }
+  10%, 30% { opacity: 0.8; }
+}
+
+.lightning-strike {
+  position: absolute;
+  width: 2px;
+  background: white;
+  opacity: 1;
+  z-index: 6;
+  animation: fadeOut 0.4s ease forwards;
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; }
+}
+
+  </style>
+</head>
+<body>
+  <audio id="lagu" src="whereweare.mp3" autoplay controls></audio>
+  <div id="lirik">tungguin bentar ya...</div>
+  <div id="credits">Credits: kenn cmiw</div>
+  <div id="watermark">Ken</div>
+  <div class="rain"></div>
+  <div class="flash" id="flash"></div>  <script>
+    const lirik = [
+      { delay: 1000, teks: "hi strangers" },
+      { delay: 4000, teks: "how are you?" },
+      { delay: 7000, teks: "bagaimana hari hari mu tanpa ku?" },
+      { delay: 10000, teks: "baik baik saja bukan" },
+      { delay: 13000, teks: "jujur aku masi merindukan mu" },
+      { delay: 16000, teks: "apakah harapan kita untuk bersama lagi sudah sirna?" },
+      { delay: 19000, teks: "aku cape membohongin diri ku sendiri" },
+      { delay: 22000, teks: "aku cape aku mencoba untuk menghindar tapi tetep gabisa" },
+      { delay: 25000, teks: "semesta selalu nemuin cara buat nyatuin kita lagi" },
+      { delay: 28000, teks: "tapi kenapa pas udah deket... kita malah saling menjauh?" },
+      { delay: 31000, teks: "aku tau, aku bukan orang yang sempurna" },
+      { delay: 34000, teks: "tapi perasaan ini terlalu jujur buat disangkal" },
+      { delay: 37000, teks: "aku cuma pengen kamu tau..." },
+      { delay: 40000, teks: "aku gak pernah bener-bener bisa ngelepasin kamu" },
+      { delay: 43000, teks: "kalau kamu baca ini dan denger lagunya..." },
+      { delay: 46000, teks: "aku harap kamu ngerasain hal yang sama" },
+      { delay: 49000, teks: "atau setidaknya... inget kita pernah sejauh itu" }
+    ];
+
+    const elemenLirik = document.getElementById("lirik");
+    const rain = document.querySelector(".rain");
+    const flash = document.getElementById("flash");
+
+    function createRainDrops() {
+      for (let i = 0; i < 100; i++) {
+        const drop = document.createElement('div');
+        drop.classList.add('drop');
+        drop.style.left = `${Math.random() * 100}%`;
+        drop.style.animationDelay = `${Math.random()}s`;
+        rain.appendChild(drop);
+      }
+    }
+
+    function createLightningStrike(x) {
+      const strike = document.createElement('div');
+      strike.classList.add('lightning-strike');
+      strike.style.left = `${x}px`;
+      let top = 0;
+      let segments = [];
+      for (let i = 0; i < 10; i++) {
+        const seg = document.createElement('div');
+        seg.className = 'lightning-strike';
+        seg.style.width = '2px';
+        seg.style.height = '50px';
+        seg.style.position = 'absolute';
+        seg.style.top = `${top}px`;
+        x += (Math.random() - 0.5) * 50;
+        seg.style.left = `${x}px`;
+        top += 50;
+        document.body.appendChild(seg);
+        segments.push(seg);
+        setTimeout(() => seg.remove(), 400);
+      }
+    }
+
+    function startLightning() {
+      setInterval(() => {
+        if (Math.random() > 0.7) {
+          flash.style.animation = 'flash 0.4s ease-in-out';
+          setTimeout(() => { flash.style.animation = ''; }, 400);
+          let count = Math.floor(Math.random() * 3) + 1;
+          for (let i = 0; i < count; i++) {
+            let x = Math.random() * window.innerWidth;
+            createLightningStrike(x);
+          }
+        }
+      }, 2500);
+    }
+
+    createRainDrops();
+    startLightning();
+
+    lirik.forEach((item) => {
+      setTimeout(() => {
+        elemenLirik.innerText = item.teks;
+        elemenLirik.style.opacity = 1;
+        setTimeout(() => {
+          elemenLirik.style.opacity = 0;
+        }, 2000);
+      }, item.delay);
+    });
+  </script></body>
+</html>
